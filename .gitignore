@@ -130,3 +130,5 @@ dmypy.json
 
 # Spotipy cache
 .cache-*
+
+.DS_Store
