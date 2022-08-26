@@ -25,6 +25,24 @@ def authorize_spotify():
     return token
 
 
+def get_tracks(spotify, playlist_id, fields):
+    all_tracks = []
+    count = 0
+    while True:
+        tracks = spotify.playlist_tracks(
+            playlist_id=playlist_id, limit=100, offset=count, fields=f"{fields},total"
+        )
+        total = tracks["total"]
+
+        all_tracks.extend(tracks["items"])
+        count += len(tracks["items"])
+
+        if count >= total:
+            break
+
+    return all_tracks
+
+
 def sort_playlist():
     pass
 
