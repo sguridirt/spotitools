@@ -40,6 +40,16 @@ def chunkated(l, size):
 
 
 def get_track_sorting_key(track):
+    """Get the sorting key for a track.
+    Tracks are sorted primarly by release date. In case of collisions, the
+    relevant keys are the album name, the artist's name and the track name.
+
+    Args:
+        track (dict): the track, as per the Spotipy documentation.
+
+    Returns:
+        str:  the sorting key for the given track.
+    """
     release_date = track["track"]["album"]["release_date"]
     artist_name = track["track"]["artists"][0]["name"]
     album_name = track["track"]["album"]["release_date"]
@@ -49,6 +59,16 @@ def get_track_sorting_key(track):
 
 
 def get_tracks(sp, playlist_id, fields):
+    """Get the tracks from a playlist.
+
+    Args:
+        sp (spotipy.Spotify): the Spotify session.
+        playlist_id (str): the playlist id to get the tracks from.
+        fields (str): the data fields that will be fetched for each track.
+
+    Returns:
+        list[dict]: list of tracks with all their data fields.
+    """
     all_tracks = []
     count = 0
     while True:
@@ -66,14 +86,30 @@ def get_tracks(sp, playlist_id, fields):
     return all_tracks
 
 
-def add_tracks(sp, username, playlist_id, tracks, chunk_size=100):
+def add_tracks(sp, username, playlist_id, tracks):
+    """Add a list of tracks to a specified playlist. The user must have edit access to that playlist.
+
+    Args:
+        sp (spotipy.Spotify): spotipy.Spotify session.
+        username (str): the username of the owner of the playlist to which the tracks will be added.
+        playlist_id (str): the id of the playlist to which the tracks will be added.
+        tracks (list[str]): the list of track ids that will be added to the playlist.
+    """
     track_ids = [t["track"]["id"] for t in tracks]
 
-    for ids_chunks in chunkated(track_ids, chunk_size):
+    CHUNK_SIZE = 100
+    for ids_chunks in chunkated(track_ids, CHUNK_SIZE):
         sp.user_playlist_add_tracks(username, playlist_id, ids_chunks)
 
 
 def delete_tracks(sp, playlist_id, tracks):
+    """Remove tracks from a playlist. The user must have edit access to that playlist.
+
+    Args:
+        sp (spotipy.Spotify): spotipy.Spotify session.
+        playlist_id (str): id of the playlist from which the tracks will be deleted.
+        tracks (list[str]): list of track ids that will be deleted from the playlist.
+    """
     track_ids = [*set([t["track"]["id"] for t in tracks])]
 
     CHUNK_SIZE = 100
@@ -82,6 +118,15 @@ def delete_tracks(sp, playlist_id, tracks):
 
 
 def sort_playlist_by_release(sp, username, playlist_id, reverse=False, inplace=False):
+    """Sort a playlist by release date of tracks, from old to new.
+
+    Args:
+        sp (spotipy.Spotify): spotipy.Spotify sessions.
+        username (str): the username of the account which will have the sorted playlist.
+        playlist_id (str): the id of the playlist to sort.
+        reverse (bool, optional): option to sort the tracks from new to old. Defaults to False.
+        inplace (bool, optional): option to sort the tracks and replace them in the original playlist. Defaults to False, which will create a copy of the original playlist.
+    """
     tracks = get_tracks(
         sp,
         playlist_id,
