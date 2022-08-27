@@ -58,7 +58,7 @@ def get_track_sorting_key(track):
     return f"{release_date} | {album_name} | {artist_name} | {track_name}"
 
 
-def get_tracks(sp, playlist_id, fields):
+def get_playlist_tracks(sp, playlist_id, fields):
     """Get the tracks from a playlist.
 
     Args:
