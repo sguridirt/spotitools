@@ -127,7 +127,8 @@ def sort_playlist_by_release(sp, username, playlist_id, reverse=False, inplace=F
         reverse (bool, optional): option to sort the tracks from new to old. Defaults to False.
         inplace (bool, optional): option to sort the tracks and replace them in the original playlist. Defaults to False, which will create a copy of the original playlist.
     """
-    tracks = get_tracks(
+    original_playlist_name = sp.playlist(playlist_id, fields="name")
+    tracks = get_playlist_tracks(
         sp,
         playlist_id,
         "items.track(id,name,album(name,release_date),artists(name))",
@@ -138,10 +139,14 @@ def sort_playlist_by_release(sp, username, playlist_id, reverse=False, inplace=F
         delete_tracks(sp, playlist_id, tracks)
         add_tracks(sp, username, playlist_id, tracks)
     else:
-        new_playlist = sp.user_playlist_create(
-            username, "sorted playlist", public=False
-        )
+        new_playlist = sp.user_playlist_create(username, f"[sorting...]", public=False)
         add_tracks(sp, username, new_playlist["id"], tracks)
+
+    sp.playlist_change_details(
+        playlist_id,
+        name=f"{original_playlist_name['name']}",
+        description="[⏳] delicadamente ordenada por fecha «para más placer 🤌».",
+    )
 
 
 def run():
