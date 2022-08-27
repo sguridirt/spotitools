@@ -138,15 +138,20 @@ def sort_playlist_by_release(sp, username, playlist_id, reverse=False, inplace=F
     if inplace:
         delete_tracks(sp, playlist_id, tracks)
         add_tracks(sp, username, playlist_id, tracks)
+        sp.playlist_change_details(
+            playlist_id,
+            name=f"{original_playlist_name['name']}",
+            description="delicadamente ordenada por fecha «para más placer 🤌».",
+        )
     else:
-        new_playlist = sp.user_playlist_create(username, f"[sorting...]", public=False)
+        new_playlist = sp.user_playlist_create(
+            username, original_playlist_name["name"], public=False
+        )
         add_tracks(sp, username, new_playlist["id"], tracks)
-
-    sp.playlist_change_details(
-        playlist_id,
-        name=f"{original_playlist_name['name']}",
-        description="[⏳] delicadamente ordenada por fecha «para más placer 🤌».",
-    )
+        sp.playlist_change_details(
+            new_playlist["id"],
+            description="delicadamente ordenada por fecha «para más placer 🤌».",
+        )
 
 
 def run():
