@@ -124,7 +124,7 @@ def sort_playlist_by_release(sp, username, playlist_id, reverse=False, inplace=F
         sp (spotipy.Spotify): spotipy.Spotify sessions.
         username (str): the username of the account which will have the sorted playlist.
         playlist_id (str): the id of the playlist to sort.
-        reverse (bool, optional): option to sort the tracks from new to old. Defaults to False.
+        reverse (bool, optional): option to sort the tracks from new (top of playlist) to old. Defaults to False.
         inplace (bool, optional): option to sort the tracks and replace them in the original playlist. Defaults to False, which will create a copy of the original playlist.
     """
     original_playlist_name = sp.playlist(playlist_id, fields="name")
