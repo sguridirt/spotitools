@@ -156,10 +156,17 @@ def sort_playlist_by_release(sp, username, playlist_id, reverse=False, inplace=F
         )
 
 
-# parse command 'extend'
-# parse command 'sort'
-# parse command 'help'
-def do_sort():
+# TODO: parse command 'extend'
+# TODO: parse command 'sort'
+# TODO: parse command 'help'
+
+
+def ask_sort_info():
+    """Ask user information and options to sort the playlist.
+
+    Returns:
+        dict[str]: dictionary with info and options.
+    """
     questions = [
         inquirer.Text(name="plid", message="Enter the id of the playlist to sort"),
         inquirer.List(
@@ -191,7 +198,7 @@ def run():
     if token:
         sp = spotipy.Spotify(auth=token)
         sp.trace = False
-        options = do_sort()
+        options = ask_sort_info()
         with yaspin(text="Sorting your playlist..."):
             sort_playlist_by_release(
                 sp,
