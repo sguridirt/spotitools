@@ -39,7 +39,12 @@ def ask_sort_info():
 
 
 def run():
-    print("\nSpotitools!\n")
+    print()
+    print("┌─┐┌─┐┌─┐┌┬┐┬┌┬┐┌─┐┌─┐┬  ┌─┐ ")
+    print("└─┐├─┘│ │ │ │ │ │ ││ ││  └─┐ ")
+    print("└─┘┴  └─┘ ┴ ┴ ┴ └─┘└─┘┴─┘└─┘•")
+    print()
+
     token, username = authorize_spotify()
     if token:
         sp = spotipy.Spotify(auth=token)
