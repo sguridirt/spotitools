@@ -55,16 +55,15 @@ def get_playlist_tracks(sp, playlist_id, fields):
     return all_tracks
 
 
-def add_tracks(sp, username, playlist_id, tracks):
+def add_tracks(sp, username, playlist_id, track_ids):
     """Add a list of tracks to a specified playlist. The user must have edit access to that playlist.
 
     Args:
         sp (spotipy.Spotify): spotipy.Spotify session.
         username (str): the username of the owner of the playlist to which the tracks will be added.
         playlist_id (str): the id of the playlist to which the tracks will be added.
-        tracks (list[str]): the list of track ids that will be added to the playlist.
+        track_ids (list[str]): the list of track ids that will be added to the playlist.
     """
-    track_ids = [t["track"]["id"] for t in tracks]
 
     CHUNK_SIZE = 100
     for ids_chunks in chunkated(track_ids, CHUNK_SIZE):
