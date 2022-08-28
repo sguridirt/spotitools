@@ -3,12 +3,8 @@ import inquirer
 from yaspin import yaspin
 
 from playlist_sort import sort_playlist_by_release
+from playlist_extend import extend_playlist, update_extended_playlist
 from sp_utils import authorize_spotify
-
-
-# TODO: parse command 'extend'
-# TODO: parse command 'sort'
-# TODO: parse command 'help'
 
 
 def ask_sort_info():
@@ -39,7 +35,7 @@ def ask_sort_info():
         ),
     ]
 
-    return inquirer.prompt(questions, theme=inquirer.themes.GreenPassion())
+    return inquirer.prompt(questions)
 
 
 def run():
@@ -48,18 +44,57 @@ def run():
     if token:
         sp = spotipy.Spotify(auth=token)
         sp.trace = False
-        options = ask_sort_info()
-        with yaspin(text="Sorting your playlist..."):
-            sort_playlist_by_release(
-                sp,
-                username,
-                playlist_id=options["plid"],
-                inplace=options["inplace"] == "Sort in place",
-                reverse=options["order"] == "Newest (top) to oldest (bottom)",
+
+        action = inquirer.list_input(
+            "What do you want to do?",
+            choices=["Sort playlist", "Extend/Update extended playlist"],
+        )
+        if action == "Sort playlist":
+            options = ask_sort_info()
+            with yaspin(text="Sorting your playlist..."):
+                sort_playlist_by_release(
+                    sp,
+                    username,
+                    playlist_id=options["plid"],
+                    inplace=options["inplace"] == "Sort in place",
+                    reverse=options["order"] == "Newest (top) to oldest (bottom)",
+                )
+            print("Your playlist has been sorted!")
+        elif action == "Extend/Update extended playlist":
+            action = inquirer.list_input(
+                "Do you want to extend a playlist or update an extended playlist?",
+                choices=["Extend new playlist", "Update extended playlist"],
             )
-        print("Your playlist has been sorted!")
-    else:
-        pass
+            if action == "Extend new playlist":
+                questions = [
+                    inquirer.Text(
+                        name="tracked_plid",
+                        message="Enter the id of the playlist to track",
+                    ),
+                    inquirer.Text(
+                        name="new_pl_name",
+                        message="Enter the new playlist name",
+                    ),
+                ]
+                options = inquirer.prompt(questions)
+                extend_playlist(
+                    sp, username, options["tracked_plid"], options["new_pl_name"]
+                )
+            elif action == "Update extended playlist":
+                questions = [
+                    inquirer.Text(
+                        name="tracked_plid",
+                        message="Please, enter the tracked playlist id",
+                    ),
+                    inquirer.Text(
+                        name="plid",
+                        message="Please, enter the id of the playlist to be updated",
+                    ),
+                ]
+                options = inquirer.prompt(questions)
+                update_extended_playlist(
+                    sp, username, options["tracked_plid"], options["plid"]
+                )
 
 
 if __name__ == "__main__":
