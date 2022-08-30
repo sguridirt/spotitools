@@ -64,7 +64,6 @@ def run():
                     inplace=options["inplace"] == "Sort in place",
                     reverse=options["order"] == "Newest (top) to oldest (bottom)",
                 )
-            print("Your playlist has been sorted!")
         elif action == "Extend/Update extended playlist":
             action = inquirer.list_input(
                 "Do you want to extend a playlist or update an extended playlist?",
@@ -82,9 +81,10 @@ def run():
                     ),
                 ]
                 options = inquirer.prompt(questions)
-                extend_playlist(
-                    sp, username, options["tracked_plid"], options["new_pl_name"]
-                )
+                with yaspin(text="Extending your playlist..."):
+                    extend_playlist(
+                        sp, username, options["tracked_plid"], options["new_pl_name"]
+                    )
             elif action == "Update extended playlist":
                 questions = [
                     inquirer.Text(
@@ -97,9 +97,12 @@ def run():
                     ),
                 ]
                 options = inquirer.prompt(questions)
-                update_extended_playlist(
-                    sp, username, options["tracked_plid"], options["plid"]
-                )
+                with yaspin(text="Updating your playlist..."):
+                    update_extended_playlist(
+                        sp, username, options["tracked_plid"], options["plid"]
+                    )
+
+    print("Done! Thanks for using spotitools.\n")
 
 
 if __name__ == "__main__":
