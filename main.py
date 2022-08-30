@@ -45,7 +45,13 @@ def run():
     print("└─┘┴  └─┘ ┴ ┴ ┴ └─┘└─┘┴─┘└─┘•")
     print()
 
-    token, username = authorize_spotify()
+    print(
+        "Spotitools needs your authorization to work with your library.\nTo authorize it, spotitools will ask your username and then direct you to the Spotify log in. Spotitools won't know your password."
+    )
+
+    username = inquirer.text("Enter your Spotify username: ")
+
+    token, username = authorize_spotify(username)
     if token:
         sp = spotipy.Spotify(auth=token)
         sp.trace = False

@@ -4,8 +4,9 @@ import spotipy
 from utils import chunkated
 
 
-def authorize_spotify():
-    username = os.environ["SPOTIFY_USERNAME"]
+def authorize_spotify(username=None):
+    if not username:
+        username = os.environ["SPOTIFY_USERNAME"]
     client_id = os.environ["SPOTIFY_CLIENT_ID"]
     client_secret = os.environ["SPOTIFY_CLIENT_SECRET"]
     redirect_uri = os.environ["SPOTIFY_REDIRECT_URI"]
